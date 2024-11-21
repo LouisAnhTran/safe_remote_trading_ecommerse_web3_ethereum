@@ -1,98 +1,80 @@
 import { ConnectButton } from "thirdweb/react";
 import thirdwebIcon from "./thirdweb.svg";
 import { client } from "./client";
+import DisplayInfo from "./components/DisplayInfo";
+import DisplayData from "./components/DisplayData";
+import CreateCampaign from "./components/CreateCampaign";
+import Sidebar from "./components/Sidebar";
+import { Route, Routes, useLocation } from "react-router-dom";
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import CampaignDetails from "./pages/CampaignDetails";
+import CreateProduct from "./pages/CreateProduct";
+import DashBoard from "./pages/DashBoard";
+import PurchaseTransactions from "./pages/PurchaseTransactions";
+import PurchaseHistory from "./pages/PurchaseHistory";
+import MyAccount from "./pages/MyAccount";
+import {
+  IoIosNotifications,
+  IoIosNotificationsOutline,
+  IoIosSettings,
+} from "react-icons/io";
+import { FaSearch } from "react-icons/fa";
+
+
+import { navlinks } from "./constants";
 
 export function App() {
-	return (
-		<main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto">
-			<div className="py-20">
-				<Header />
+  const location = useLocation();
+  return (
+    <div className="h-screen flex flex-row">
+      {/* Side bar */}
+      <div className="w-12p">
+        <Sidebar></Sidebar>
+      </div>
 
-				<div className="flex justify-center mb-20">
-					<ConnectButton
-						client={client}
-						appMetadata={{
-							name: "Example app",
-							url: "https://example.com",
-						}}
-					/>
-				</div>
+      {/* content */}
+      <div className="flex-1">
+        {/* Nav bar */}
+        <div className="flex flex-row p-4 justify-between px-10 items-center">
+          <div>
+            {navlinks.map((link: any, index: any) => (
+              <p className="text-white text-xl">
+                {" "}
+                {link.link == location.pathname && link.name}
+              </p>
+            ))}
+          </div>
+          <div className="flex flex-row items-center space-x-2">
+            <div className="flex flex-row bg-[#3A3D45] w-[300px] h-[40px] rounded-3xl items-center pl-2">
+              <FaSearch className="text-white w-[24px] h-[24px] pl-2 cursor-pointer"></FaSearch>
+              <input
+                type="text"
+                name=""
+                id=""
+                placeholder="Search for anything"
+                className="p-4 text-sm bg-transparent border-none outline-none focus:disabled "
+              />
+            </div>
 
-				<ThirdwebResources />
-			</div>
-		</main>
-	);
-}
+            <IoIosNotificationsOutline className="text-white cursor-pointer font-bold w-[40px] h-[40px] rounded-full p-2 bg-[#3A3D45]"></IoIosNotificationsOutline>
+            <IoIosSettings className="text-white cursor-pointer font-bold w-[40px] h-[40px] rounded-full p-2 bg-[#3A3D45]"></IoIosSettings>
+            <ConnectButton client={client} />
+          </div>
+        </div>
 
-function Header() {
-	return (
-		<header className="flex flex-col items-center mb-20 md:mb-20">
-			<img
-				src={thirdwebIcon}
-				alt=""
-				className="size-[150px] md:size-[150px]"
-				style={{
-					filter: "drop-shadow(0px 0px 24px #a726a9a8)",
-				}}
-			/>
-
-			<h1 className="text-2xl md:text-6xl font-bold tracking-tighter mb-6 text-zinc-100">
-				thirdweb SDK
-				<span className="text-zinc-300 inline-block mx-1"> + </span>
-				<span className="inline-block -skew-x-6 text-violet-500"> vite </span>
-			</h1>
-
-			<p className="text-zinc-300 text-base">
-				Read the{" "}
-				<code className="bg-zinc-800 text-zinc-300 px-2 rounded py-1 text-sm mx-1">
-					README.md
-				</code>{" "}
-				file to get started.
-			</p>
-		</header>
-	);
-}
-
-function ThirdwebResources() {
-	return (
-		<div className="grid gap-4 lg:grid-cols-3 justify-center">
-			<ArticleCard
-				title="thirdweb SDK Docs"
-				href="https://portal.thirdweb.com/typescript/v5"
-				description="thirdweb TypeScript SDK documentation"
-			/>
-
-			<ArticleCard
-				title="Components and Hooks"
-				href="https://portal.thirdweb.com/typescript/v5/react"
-				description="Learn about the thirdweb React components and hooks in thirdweb SDK"
-			/>
-
-			<ArticleCard
-				title="thirdweb Dashboard"
-				href="https://thirdweb.com/dashboard"
-				description="Deploy, configure, and manage your smart contracts from the dashboard."
-			/>
-		</div>
-	);
-}
-
-function ArticleCard(props: {
-	title: string;
-	href: string;
-	description: string;
-}) {
-	return (
-		<a
-			href={`${props.href}?utm_source=vite-template`}
-			target="_blank"
-			className="flex flex-col border border-zinc-800 p-4 rounded-lg hover:bg-zinc-900 transition-colors hover:border-zinc-700"
-			rel="noreferrer"
-		>
-			<article>
-				<h2 className="text-lg font-semibold mb-2">{props.title}</h2>
-				<p className="text-sm text-zinc-400">{props.description}</p>
-			</article>
-		</a>
-	);
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/create-product" element={<CreateProduct />} />
+          <Route path="/dashboard" element={<DashBoard />} />
+          <Route
+            path="/purchase-transactions/"
+            element={<PurchaseTransactions />}
+          />
+          <Route path="/purchase-history/" element={<PurchaseHistory />} />
+          <Route path="/myaccount/" element={<MyAccount />} />
+        </Routes>
+      </div>
+    </div>
+  );
 }
