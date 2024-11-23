@@ -23,11 +23,14 @@ import { FaSearch } from "react-icons/fa";
 
 
 import { navlinks } from "./constants";
+import Explore from "./pages/Explore";
+import ProductDetails from "./pages/ProductDetails";
 
 export function App() {
   const location = useLocation();
+  
   return (
-    <div className="h-screen flex flex-row">
+    <div className="h-screen flex flex-row bg-black">
       {/* Side bar */}
       <div className="w-12p">
         <Sidebar></Sidebar>
@@ -35,12 +38,12 @@ export function App() {
 
       {/* content */}
       <div className="flex-1">
+
         {/* Nav bar */}
         <div className="flex flex-row p-4 justify-between px-10 items-center">
           <div>
             {navlinks.map((link: any, index: any) => (
               <p className="text-white text-xl">
-                {" "}
                 {link.link == location.pathname && link.name}
               </p>
             ))}
@@ -63,8 +66,8 @@ export function App() {
           </div>
         </div>
 
-        <Routes>
-          <Route path="/" element={<Home />} />
+        <Routes >
+          <Route path="/" element={<Explore />} />
           <Route path="/create-product" element={<CreateProduct />} />
           <Route path="/dashboard" element={<DashBoard />} />
           <Route
@@ -73,6 +76,7 @@ export function App() {
           />
           <Route path="/purchase-history/" element={<PurchaseHistory />} />
           <Route path="/myaccount/" element={<MyAccount />} />
+          <Route path="/product-detail/:id" element={<ProductDetails></ProductDetails>}></Route>
         </Routes>
       </div>
     </div>

@@ -25,12 +25,12 @@ const Sidebar = () => {
       <div className="flex flex-col space-y-4 mt-4 ">
         {navlinks.map((link: any,index: any) => (
           <div key={index}
-            className={`flex flex-row hover:rounded-3xl group cursor-pointer hover:bg-[#051537] p-4 items-center transition-all duration-300 ${location.pathname==link.link && "bg-[#051537] rounded-3xl"}`}
+            className={`flex flex-row text-white hover:rounded-3xl group cursor-pointer hover:bg-[#051537] p-4 items-center transition-all duration-300 ${location.pathname==link.link && "bg-[#051537] rounded-3xl"}`}
             onClick={() => navigate(link.link)}
           >
-            <div className={` group-hover:text-[#5588F6] text-white transition-all duration-300 ${location.pathname==link.link && "text-[#5588F6]"}`}>{link.imgUrl}
+            <div className={` group-hover:text-[#5588F6]  transition-all duration-300 ${location.pathname==link.link && "text-[#5588F6]"}`}>{link.imgUrl}
             </div>
-            <p className={`text-sm group-hover:text-[#5588F6] ml-3 text-white transition-all duration-300 ${location.pathname==link.link && "text-[#5588F6]"}`}>{link.name}</p>
+            <p className={`text-sm group-hover:text-[#5588F6] ml-3 transition-all duration-300 ${location.pathname==link.link && "text-[#5588F6]"}`}>{link.name}</p>
           </div>
         ))}
       </div>
