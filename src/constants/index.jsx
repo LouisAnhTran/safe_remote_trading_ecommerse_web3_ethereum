@@ -27,9 +27,15 @@ export const navlinks = [
     disabled: true,
   },
   {
-    name: 'Purchase Transactions',
+    name: 'Seller Transactions',
     imgUrl: <FaShoppingCart className='w-[24px] h-[24px]'></FaShoppingCart>,
-    link: '/purchase-transactions',
+    link: '/seller-transactions',
+    disabled: true,
+  },
+  {
+    name: 'Buyer Transactions',
+    imgUrl: <FaShoppingCart className='w-[24px] h-[24px]'></FaShoppingCart>,
+    link: '/buyer-transactions',
     disabled: true,
   },
   {
@@ -49,3 +55,13 @@ export const navlinks = [
     disabled: true,
   },
 ];
+
+// Enum mapping
+export const stateMappingSeller = {
+  0: "Showed Interest - Waiting Seller Acknowledgement",
+  1: "Seller deposited",
+  2: "Locked funds - Seller and Buyer Deposited",
+  3: "Release",
+  4: "Inactive",
+  5: "Complete",
+};

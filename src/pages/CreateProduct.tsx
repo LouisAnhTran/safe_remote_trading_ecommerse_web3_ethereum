@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   sellerName: z.string().min(2, {
@@ -50,6 +51,7 @@ const CreateProduct = () => {
   const { mutate: sendTransaction } = useSendTransaction();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const navigate=useNavigate();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -91,11 +93,16 @@ const CreateProduct = () => {
       sendTransaction(transaction, {
         onSuccess: (result) => {
           console.log("Transaction success:", result);
+
           toast({
             title: "Succesesful transaction",
             description: "The product has been created succesesfully",
             variant: "success",
           });
+
+          navigate("/")
+
+
         },
         onError: (error) => {
           console.error("Transaction failed:", error);
@@ -114,6 +121,7 @@ const CreateProduct = () => {
         variant: "destructive",
       });
     }
+    
   }
 
 
