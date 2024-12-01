@@ -58,10 +58,20 @@ export const navlinks = [
 
 // Enum mapping
 export const stateMappingSeller = {
-  0: "Showed Interest - Waiting Seller Acknowledgement",
-  1: "Seller deposited",
+  0: "Buyer Showed Interest - Awaiting Your Acknowledgement",
+  1: "You deposited - Awaiting buyer deposit or you can reclaim deposit",
   2: "Locked funds - Seller and Buyer Deposited",
-  3: "Release",
-  4: "Inactive",
-  5: "Complete",
+  3: "Buyer Confirmed Receipt of Product",
+  4: "Inactive Purchase Transaction",
+  5: "Complete - Successful product exchange",
+};
+
+// Enum mapping
+export const stateMappingBuyer = {
+  0: "You Showed Interest - Awaiting Seller Acknowledgement",
+  1: "Seller deposited - Awaiting your deposit by confirming purchase",
+  2: "Locked funds - Seller and Buyer Deposited",
+  3: "You Confirmed Receipt of Product and Reclaimed Deposit",
+  4: "Inactive Purchase Transaction",
+  5: "Complete - Successful purchase transaction",
 };

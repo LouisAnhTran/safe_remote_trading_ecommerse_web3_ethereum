@@ -92,7 +92,7 @@ const ProductDetails = () => {
             variant: "success",
           });
 
-          navigate("/purchase-transactions");
+          navigate("/buyer-transactions");
         },
         onError: (error) => {
           console.log("Transaction failed:", error);

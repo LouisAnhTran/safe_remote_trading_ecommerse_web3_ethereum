@@ -17,13 +17,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { stateMappingSeller } from "../constants";
+import { stateMappingBuyer } from "../constants";
 import { Button } from "@/components/ui/button";
 import { prepareContractCall, sendTransaction } from "thirdweb";
 
 interface ConfirmIntestestParams {
   purchaseId: number;
   weiValue: number;
+}
+
+interface ConfirmReceiptProductParams {
+  purchaseId: number;
 }
 
 const BuyerTransactions = () => {
@@ -72,11 +76,57 @@ const BuyerTransactions = () => {
 
           toast({
             title: "Succesesful transaction",
-            description: "The product has been created succesesfully",
+            description: "Purchase has been succesesfully confirmed",
             variant: "success",
           });
 
-          navigate("/");
+          navigate("/buyer-transactions");
+        },
+        onError: (error) => {
+          console.error("Transaction failed:", error);
+          console.log("transaction error: ", error.message);
+
+          toast({
+            title: "Failed transaction",
+            description: "Error with transaction for creating product",
+            variant: "destructive",
+          });
+        },
+      });
+    } catch (error) {
+      console.error("Error preparing transaction:", error);
+      toast({
+        title: "Failed transaction",
+        description: "Error with transaction for creating product",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // confirm receipt of product
+  const confirmReceiptProduct = async ({
+    purchaseId,
+  }: ConfirmReceiptProductParams) => {
+    try {
+      const transaction = await prepareContractCall({
+        contract,
+        method: "function buyerConfirmReceivingProduct(uint256 _purchase_id)",
+        params: [BigInt(purchaseId)],
+      });
+
+      console.log("Prepared transaction:", transaction);
+
+      sendTransaction(transaction, {
+        onSuccess: (result) => {
+          console.log("Transaction success:", result);
+
+          toast({
+            title: "Succesesful transaction",
+            description: "Receipt of product has been succesesfully confirmed",
+            variant: "success",
+          });
+
+          navigate("/buyer-transactions");
         },
         onError: (error) => {
           console.error("Transaction failed:", error);
@@ -130,7 +180,7 @@ const BuyerTransactions = () => {
                   <TableCell>
                     {Number(item.requiredDepositSellerInWei.toString()) / 1e18}
                   </TableCell>
-                  <TableCell>{stateMappingSeller[item.status]}</TableCell>
+                  <TableCell>{stateMappingBuyer[item.status]}</TableCell>
 
                   <TableCell>
                     {item.status == 0 && (
@@ -163,35 +213,24 @@ const BuyerTransactions = () => {
                       </div>
                     )}
 
-                    {item.status == 1 && (
-                      <div className="flex flex-row space-x-2 justify-center">
-                        <Button
-                          onClick={() =>
-                            confirmPurchase({
-                              purchaseId: Number(item.purchaseId),
-                              weiValue: Number(item.requiredDepositBuyerInWei),
-                            })
-                          }
-                          className="bg-purple-400 hover:bg-purple-600"
-                        >
-                          Confirm Purchase
-                        </Button>
-                      </div>
-                    )}
-
                     {item.status == 2 && (
                       <div className="flex flex-row space-x-2 justify-center">
                         <Button
                           onClick={() =>
-                            confirmPurchase({
+                            confirmReceiptProduct({
                               purchaseId: Number(item.purchaseId),
-                              weiValue: Number(item.requiredDepositBuyerInWei),
                             })
                           }
                           className="bg-green-400 hover:bg-green-600"
                         >
                           Confirm Receipt of Product
                         </Button>
+                      </div>
+                    )}
+
+                    {item.status == 3 && (
+                      <div className="flex flex-row space-x-2 justify-center">
+                        <p>No further action required </p>
                       </div>
                     )}
                   </TableCell>
