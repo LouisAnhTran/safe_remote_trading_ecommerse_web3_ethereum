@@ -30,6 +30,11 @@ interface ConfirmReceiptProductParams {
   purchaseId: number;
 }
 
+interface BuyerDiscardInterestToBuyProductParams {
+  purchaseId: number;
+}
+
+
 const BuyerTransactions = () => {
   const account = useActiveAccount();
   const navigate = useNavigate();
@@ -56,6 +61,7 @@ const BuyerTransactions = () => {
   console.log("purchase transactions data ", data);
 
   // all actions over here
+  // buyer confirm purchase
   const confirmPurchase = async ({
     purchaseId,
     weiValue,
@@ -77,6 +83,52 @@ const BuyerTransactions = () => {
           toast({
             title: "Succesesful transaction",
             description: "Purchase has been succesesfully confirmed",
+            variant: "success",
+          });
+
+          navigate("/buyer-transactions");
+        },
+        onError: (error) => {
+          console.error("Transaction failed:", error);
+          console.log("transaction error: ", error.message);
+
+          toast({
+            title: "Failed transaction",
+            description: "Error with transaction for creating product",
+            variant: "destructive",
+          });
+        },
+      });
+    } catch (error) {
+      console.error("Error preparing transaction:", error);
+      toast({
+        title: "Failed transaction",
+        description: "Error with transaction for creating product",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // confirm receipt of product
+  const buyerCancelInterestToBuyProduct = async ({
+    purchaseId,
+  }: BuyerDiscardInterestToBuyProductParams) => {
+    try {
+      const transaction = await prepareContractCall({
+        contract,
+        method: "function buyerDiscardInterestForProduct(uint256 _purchase_id)",
+        params: [BigInt(purchaseId)],
+      });
+
+      console.log("Prepared transaction:", transaction);
+
+      sendTransaction(transaction, {
+        onSuccess: (result) => {
+          console.log("Transaction success:", result);
+
+          toast({
+            title: "Succesesful transaction",
+            description: "You succesesfully cancel your interest to buy product",
             variant: "success",
           });
 
@@ -185,15 +237,14 @@ const BuyerTransactions = () => {
                   <TableCell>
                     {item.status == 0 && (
                       <Button
-                        // onClick={() =>
-                        //   acknowledgeInterest({
-                        //     purchaseId: Number(item.purchaseId),
-                        //     weiValue: Number(item.requiredDepositSellerInWei),
-                        //   })
-                        // }
+                        onClick={() =>
+                          buyerCancelInterestToBuyProduct({
+                            purchaseId: Number(item.purchaseId),
+                          })
+                        }
                         className="bg-red-400 hover:bg-red-600"
                       >
-                        Abort Transaction
+                        Cancel Transaction
                       </Button>
                     )}
 
@@ -231,6 +282,18 @@ const BuyerTransactions = () => {
                     {item.status == 3 && (
                       <div className="flex flex-row space-x-2 justify-center">
                         <p>No further action required </p>
+                      </div>
+                    )}
+
+                    {item.status == 4 && (
+                      <div className="flex flex-row space-x-2 justify-center">
+                        <p>No further action required </p>
+                      </div>
+                    )}
+
+                    {item.status == 5 && (
+                      <div className="flex flex-row space-x-2 justify-center">
+                        <p>Successful - No further action required </p>
                       </div>
                     )}
                   </TableCell>

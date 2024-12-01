@@ -133,14 +133,58 @@ const ProductDetails = () => {
 
   return (
     <div className="flex flex-row justify-center">
-      ProductDetails
       {product && (
-        <div className="w-6/12 bg-[#1C1C24] h-[500px] rounded-2xl p-8 text-[#808191]">
-          <p> Product Name: {product.name}</p>
-          <p> Seller Name: {product.sellerName}</p>
-          <p> Seller: {product.seller}</p>
-          <p> Price: {Number(product.priceInWei) / 1e18} ether </p>
-          <p> Description: {product.description}</p>
+        <div className="w-6/12 bg-[#1C1C24] rounded-2xl p-8 pb-12 text-[#808191]">
+          <div className="flex flex-row">
+
+            <div className="flex flex-col space-y-4 w-7/12">
+              <div className="flex flex-row justify-start space-x-14">
+                <div className="flex flex-col space-y-6">
+                  <div>
+                    <p className="font-bold">Product Name</p>
+                    <p>{product.name}</p>
+                  </div>
+
+                  <div>
+                    <p className="font-bold">Seller Name</p>
+                    <p>{product.sellerName}</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col space-y-6">
+                  <div>
+                    <p className="font-bold">Seller</p>
+                    <p>{product.sellerName}</p>
+                  </div>
+
+                  <div>
+                    <p className="font-bold">Price</p>
+                    <p>{Number(product.priceInWei) / 1e18} ETH</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-4">
+                <div>
+                  <p className="font-bold">Description</p>
+                  <p>{product.description}</p>
+                </div>
+
+                <div>
+                  <p className="font-bold">Seller Address</p>
+                  <p>{product.seller}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1 ">
+              <img
+                src={product.image}
+                alt="tag"
+                className="w-[300px] h-[300px] object-cover rounded-[30px]"
+              />
+            </div>
+          </div>
 
           {/* Form */}
           <Form {...form}>
@@ -150,7 +194,7 @@ const ProductDetails = () => {
                 name="quantity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#808191] font-semibold">
+                    <FormLabel className="text-[#808191] font-bold">
                       Quantity
                     </FormLabel>
                     <FormControl className="text-[#808191]">

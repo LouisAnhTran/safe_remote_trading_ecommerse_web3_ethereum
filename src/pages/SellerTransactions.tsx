@@ -210,8 +210,8 @@ const SellerTransactions = () => {
     }
   };
 
-   // seller reclaim deposit after acknowledge
-   const reclaimDepositAfterAcknowledge = async ({
+  // seller reclaim deposit after acknowledge
+  const reclaimDepositAfterAcknowledge = async ({
     purchaseId,
   }: ReclaimDepositAfterAcknowledgeParams) => {
     try {
@@ -311,7 +311,7 @@ const SellerTransactions = () => {
                               purchaseId: Number(item.purchaseId),
                             })
                           }
-                          className="bg-red-400 hover:bg-red-600"
+                          className="bg-red-400 hover:bg-red-600 w-[110px]"
                         >
                           Reject
                         </Button>

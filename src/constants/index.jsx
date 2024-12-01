@@ -68,7 +68,7 @@ export const stateMappingSeller = {
 
 // Enum mapping
 export const stateMappingBuyer = {
-  0: "You Showed Interest - Awaiting Seller Acknowledgement",
+  0: "You Showed Interest - Awaiting Seller Acknowledgement or Cancel",
   1: "Seller deposited - Awaiting your deposit by confirming purchase",
   2: "Locked funds - Seller and Buyer Deposited",
   3: "You Confirmed Receipt of Product and Reclaimed Deposit",
