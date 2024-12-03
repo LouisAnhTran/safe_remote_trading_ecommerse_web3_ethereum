@@ -20,7 +20,15 @@ import {
   IoIosSettings,
 } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import ReactLoading from "react-loading";
 
 import { navlinks } from "./constants";
 import Explore from "./pages/Explore";
@@ -30,6 +38,9 @@ import { prepareEvent } from "thirdweb";
 import { contract } from "./main";
 import BuyerTransactions from "./pages/BuyerTransactions";
 import SellerTransactions from "./pages/SellerTransactions";
+import { Button } from "./components/ui/button";
+import { useDispatch, useSelector } from "react-redux";
+import { getLoadingState } from "./features/load/loadSlice";
 
 // handle event
 const preparedEvent = prepareEvent({
@@ -39,24 +50,40 @@ const preparedEvent = prepareEvent({
 
 export function App() {
   const location = useLocation();
+  const isLoadingGlobal = useSelector(getLoadingState);
+  const dispatch = useDispatch();
 
   const { data: event } = useContractEvents({
     contract,
     events: [preparedEvent],
   });
 
-  console.log("event: ",event)
+  console.log("event: ", event);
+
+  console.log("isLoadingGlobal: ", isLoadingGlobal);
 
   return (
-    <div className="h-screen flex flex-row bg-black">
+    <div className="h-screen flex flex-row bg-black relative">
       {/* Side bar */}
       <div className="w-12p">
         <Sidebar></Sidebar>
       </div>
 
+      {/* Drawer */}
+      {isLoadingGlobal && (
+        <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-80 flex justify-center items-center z-50 flex-col space-y-16">
+          <ReactLoading
+            type={"spinningBubbles"}
+            color={"#5588F6"}
+            height={30}
+            width={80}
+          />
+          <p className="text-[#5588F6] font-semibold text-xl">Transaction in progress...</p>
+        </div>
+      )}
+
       {/* content */}
       <div className="flex-1">
-
         {/* Nav bar */}
         <div className="flex flex-row p-4 justify-between px-10 items-center">
           <div>
@@ -84,21 +111,18 @@ export function App() {
           </div>
         </div>
 
-        <Routes >
+        <Routes>
           <Route path="/" element={<Explore />} />
           <Route path="/create-product" element={<CreateProduct />} />
           <Route path="/dashboard" element={<DashBoard />} />
-          <Route
-            path="/buyer-transactions"
-            element={<BuyerTransactions />}
-          />
-          <Route
-            path="/seller-transactions"
-            element={<SellerTransactions />}
-          />
+          <Route path="/buyer-transactions" element={<BuyerTransactions />} />
+          <Route path="/seller-transactions" element={<SellerTransactions />} />
           <Route path="/purchase-history" element={<PurchaseHistory />} />
           <Route path="/myaccount/" element={<MyAccount />} />
-          <Route path="/product-detail/:id" element={<ProductDetails></ProductDetails>}></Route>
+          <Route
+            path="/product-detail/:id"
+            element={<ProductDetails></ProductDetails>}
+          ></Route>
         </Routes>
       </div>
     </div>

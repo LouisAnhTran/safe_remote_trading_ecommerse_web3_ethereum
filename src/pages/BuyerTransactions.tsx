@@ -4,6 +4,7 @@ import {
   useReadContract,
   useSendTransaction,
 } from "thirdweb/react";
+import ReactLoading from "react-loading";
 
 import { contract } from "@/main";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +34,6 @@ interface ConfirmReceiptProductParams {
 interface BuyerDiscardInterestToBuyProductParams {
   purchaseId: number;
 }
-
 
 const BuyerTransactions = () => {
   const account = useActiveAccount();
@@ -128,7 +128,8 @@ const BuyerTransactions = () => {
 
           toast({
             title: "Succesesful transaction",
-            description: "You succesesfully cancel your interest to buy product",
+            description:
+              "You succesesfully cancel your interest to buy product",
             variant: "success",
           });
 
@@ -203,106 +204,123 @@ const BuyerTransactions = () => {
 
   return (
     <div className="flex flex-row justify-center mt-10">
-      <div className="w-10/12 flex flex-col">
-        {data && data.length > 0 && (
-          <Table>
-            <TableCaption>A list of your recent transactions.</TableCaption>
-            <TableHeader>
-              <TableRow className="text-white">
-                <TableHead>Purchase ID</TableHead>
-                <TableHead>Seller</TableHead>
-                <TableHead>Product ID</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Deposit Buyer (Ether)</TableHead>
-                <TableHead>Deposit Seller (Ether)</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>{item.purchaseId.toString()}</TableCell>
-                  <TableCell>{item.seller}</TableCell>
-                  <TableCell>{item.productId.toString()}</TableCell>
-                  <TableCell>{item.quantity.toString()}</TableCell>
-                  <TableCell>
-                    {Number(item.requiredDepositBuyerInWei.toString()) / 1e18}
-                  </TableCell>
-                  <TableCell>
-                    {Number(item.requiredDepositSellerInWei.toString()) / 1e18}
-                  </TableCell>
-                  <TableCell>{stateMappingBuyer[item.status]}</TableCell>
+      {isPending && (
+        <div className="w-full h-full flex flex-col justify-center items-center space-y-16 mt-40">
+          <ReactLoading
+            type={"spinningBubbles"}
+            color={"#5588F6"}
+            height={30}
+            width={80}
+          />
+          <p className="text-[#5588F6] font-semibold">Loading...</p>
+        </div>
+      )}
 
-                  <TableCell>
-                    {item.status == 0 && (
-                      <Button
-                        onClick={() =>
-                          buyerCancelInterestToBuyProduct({
-                            purchaseId: Number(item.purchaseId),
-                          })
-                        }
-                        className="bg-red-400 hover:bg-red-600"
-                      >
-                        Cancel Transaction
-                      </Button>
-                    )}
-
-                    {item.status == 1 && (
-                      <div className="flex flex-row space-x-2 justify-center">
-                        <Button
-                          onClick={() =>
-                            confirmPurchase({
-                              purchaseId: Number(item.purchaseId),
-                              weiValue: Number(item.requiredDepositBuyerInWei),
-                            })
-                          }
-                          className="bg-purple-400 hover:bg-purple-600"
-                        >
-                          Confirm Purchase
-                        </Button>
-                      </div>
-                    )}
-
-                    {item.status == 2 && (
-                      <div className="flex flex-row space-x-2 justify-center">
-                        <Button
-                          onClick={() =>
-                            confirmReceiptProduct({
-                              purchaseId: Number(item.purchaseId),
-                            })
-                          }
-                          className="bg-green-400 hover:bg-green-600"
-                        >
-                          Confirm Receipt of Product
-                        </Button>
-                      </div>
-                    )}
-
-                    {item.status == 3 && (
-                      <div className="flex flex-row space-x-2 justify-center">
-                        <p>No further action required </p>
-                      </div>
-                    )}
-
-                    {item.status == 4 && (
-                      <div className="flex flex-row space-x-2 justify-center">
-                        <p>No further action required </p>
-                      </div>
-                    )}
-
-                    {item.status == 5 && (
-                      <div className="flex flex-row space-x-2 justify-center">
-                        <p>Successful - No further action required </p>
-                      </div>
-                    )}
-                  </TableCell>
+      {!isPending && (
+        <div className="w-10/12 flex flex-col">
+          {data && data.length > 0 && (
+            <Table>
+              <TableCaption>A list of your recent transactions.</TableCaption>
+              <TableHeader>
+                <TableRow className="text-white">
+                  <TableHead>Purchase ID</TableHead>
+                  <TableHead>Seller</TableHead>
+                  <TableHead>Product ID</TableHead>
+                  <TableHead>Quantity</TableHead>
+                  <TableHead>Deposit Buyer (Ether)</TableHead>
+                  <TableHead>Deposit Seller (Ether)</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Action</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </div>
+              </TableHeader>
+              <TableBody>
+                {data.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{item.purchaseId.toString()}</TableCell>
+                    <TableCell>{item.seller}</TableCell>
+                    <TableCell>{item.productId.toString()}</TableCell>
+                    <TableCell>{item.quantity.toString()}</TableCell>
+                    <TableCell>
+                      {Number(item.requiredDepositBuyerInWei.toString()) / 1e18}
+                    </TableCell>
+                    <TableCell>
+                      {Number(item.requiredDepositSellerInWei.toString()) /
+                        1e18}
+                    </TableCell>
+                    <TableCell>{stateMappingBuyer[item.status]}</TableCell>
+
+                    <TableCell>
+                      {item.status == 0 && (
+                        <Button
+                          onClick={() =>
+                            buyerCancelInterestToBuyProduct({
+                              purchaseId: Number(item.purchaseId),
+                            })
+                          }
+                          className="bg-red-400 hover:bg-red-600"
+                        >
+                          Cancel Transaction
+                        </Button>
+                      )}
+
+                      {item.status == 1 && (
+                        <div className="flex flex-row space-x-2 justify-center">
+                          <Button
+                            onClick={() =>
+                              confirmPurchase({
+                                purchaseId: Number(item.purchaseId),
+                                weiValue: Number(
+                                  item.requiredDepositBuyerInWei
+                                ),
+                              })
+                            }
+                            className="bg-purple-400 hover:bg-purple-600"
+                          >
+                            Confirm Purchase
+                          </Button>
+                        </div>
+                      )}
+
+                      {item.status == 2 && (
+                        <div className="flex flex-row space-x-2 justify-center">
+                          <Button
+                            onClick={() =>
+                              confirmReceiptProduct({
+                                purchaseId: Number(item.purchaseId),
+                              })
+                            }
+                            className="bg-green-400 hover:bg-green-600"
+                          >
+                            Confirm Receipt of Product
+                          </Button>
+                        </div>
+                      )}
+
+                      {item.status == 3 && (
+                        <div className="flex flex-row space-x-2 justify-center">
+                          <p>No further action required </p>
+                        </div>
+                      )}
+
+                      {item.status == 4 && (
+                        <div className="flex flex-row space-x-2 justify-center">
+                          <p>No further action required </p>
+                        </div>
+                      )}
+
+                      {item.status == 5 && (
+                        <div className="flex flex-row space-x-2 justify-center">
+                          <p>Successful - No further action required </p>
+                        </div>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
+      )}
     </div>
   );
 };

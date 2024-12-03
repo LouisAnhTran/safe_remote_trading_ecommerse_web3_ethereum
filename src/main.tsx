@@ -4,6 +4,8 @@ import { App } from "./App";
 import { ThirdwebProvider } from "thirdweb/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
+import { store } from "./app/store";
+import { Provider } from "react-redux";
 
 import "./index.css";
 import { createThirdwebClient, getContract } from "thirdweb";
@@ -23,11 +25,13 @@ export const contract = getContract({
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Router>
-      <ThirdwebProvider>
-        <Toaster />
-        <App />
-      </ThirdwebProvider>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <ThirdwebProvider>
+          <Toaster />
+          <App />
+        </ThirdwebProvider>
+      </Router>
+    </Provider>
   </React.StrictMode>
 );
