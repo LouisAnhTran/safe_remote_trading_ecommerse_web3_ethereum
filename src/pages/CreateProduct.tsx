@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setToLoad, unLoad } from "@/features/load/loadSlice";
 
 const formSchema = z.object({
   sellerName: z.string().min(2, {
@@ -27,15 +29,9 @@ const formSchema = z.object({
   productName: z.string().min(2, {
     message: "Product name must be at least 2 characters.",
   }),
-  price: z.number().refine(
-    (value) => {
-      // Check if the value is either an integer or a float
-      return Number.isInteger(value) || value % 1 !== 0;
-    },
-    {
-      message: "Price must be in ether",
-    }
-  ),
+  price: z.preprocess((val) => parseFloat(val), z.number().positive({
+    message: "Price must be a positive number.",
+  })),
   description: z.string().min(10, {
     message: "You must provide as much detail as possible for your product",
   }),
@@ -52,6 +48,8 @@ const CreateProduct = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const navigate=useNavigate();
+  const dispatch = useDispatch();
+
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -74,6 +72,8 @@ const CreateProduct = () => {
     console.log("form all value: ", values);
 
     try {
+      dispatch(setToLoad());
+
       const transaction = await prepareContractCall({
         contract,
         method:
@@ -102,7 +102,7 @@ const CreateProduct = () => {
 
           navigate("/")
 
-
+          dispatch(unLoad());
         },
         onError: (error) => {
           console.error("Transaction failed:", error);
@@ -111,6 +111,9 @@ const CreateProduct = () => {
             description: "Error with transaction for creating product",
             variant: "destructive",
           });
+
+          dispatch(unLoad());
+
         },
       });
     } catch (error) {
@@ -120,6 +123,7 @@ const CreateProduct = () => {
         description: "Error with transaction for creating product",
         variant: "destructive",
       });
+      dispatch(unLoad());
     }
     
   }

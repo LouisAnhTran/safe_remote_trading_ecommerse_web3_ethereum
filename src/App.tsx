@@ -1,4 +1,8 @@
-import { ConnectButton, useContractEvents } from "thirdweb/react";
+import {
+  ConnectButton,
+  useActiveAccount,
+  useContractEvents,
+} from "thirdweb/react";
 import thirdwebIcon from "./thirdweb.svg";
 import { client } from "./client";
 import DisplayInfo from "./components/DisplayInfo";
@@ -41,6 +45,8 @@ import SellerTransactions from "./pages/SellerTransactions";
 import { Button } from "./components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { getLoadingState } from "./features/load/loadSlice";
+import { useToast } from "./hooks/use-toast";
+import { useEffect, useRef } from "react";
 
 // handle event
 const preparedEvent = prepareEvent({
@@ -52,14 +58,35 @@ export function App() {
   const location = useLocation();
   const isLoadingGlobal = useSelector(getLoadingState);
   const dispatch = useDispatch();
+  const account = useActiveAccount();
+  const { toast } = useToast();
 
-  const { data: event } = useContractEvents({
-    contract,
-    events: [preparedEvent],
-  });
+   // Ref to track processed events
+   const processedEvents = useRef(new Set());
 
-  console.log("event: ", event);
-
+   // Handle all events
+   const { data: events } = useContractEvents({
+     contract,
+     events: [preparedEvent],
+   });
+ 
+   useEffect(()=>{
+    if (events && account) {
+      const seller_address = events?.[events.length-1]?.args?.seller;
+ 
+      console.log("event: ",events)
+ 
+      // Ensure we process each event only once
+      if (seller_address === account?.address) {
+        toast({
+          title: "Purchase created",
+          description: "Someone showed interest to buy your product",
+          variant: "success",
+        });
+      }
+    }
+   },[events,account])
+  
   console.log("isLoadingGlobal: ", isLoadingGlobal);
 
   return (
@@ -78,7 +105,9 @@ export function App() {
             height={30}
             width={80}
           />
-          <p className="text-[#5588F6] font-semibold text-xl">Transaction in progress...</p>
+          <p className="text-[#5588F6] font-semibold text-xl">
+            Transaction in progress...
+          </p>
         </div>
       )}
 
@@ -93,8 +122,9 @@ export function App() {
               </p>
             ))}
           </div>
+
           <div className="flex flex-row items-center space-x-2">
-            <div className="flex flex-row bg-[#3A3D45] w-[300px] h-[40px] rounded-3xl items-center pl-2">
+            <div className="flex flex-row bg-[#3A3D45] w-[300px] h-[40px] rounded-3xl items-center pl-2 hover:opacity-70 transition-all duration-300">
               <FaSearch className="text-white w-[24px] h-[24px] pl-2 cursor-pointer"></FaSearch>
               <input
                 type="text"
@@ -105,7 +135,8 @@ export function App() {
               />
             </div>
 
-            <IoIosNotificationsOutline className="text-white cursor-pointer font-bold w-[40px] h-[40px] rounded-full p-2 bg-[#3A3D45]"></IoIosNotificationsOutline>
+            <IoIosNotificationsOutline className="text-white cursor-pointer font-bold w-[40px] h-[40px] rounded-full p-2 bg-[#3A3D45] hover:opacity-70 transition-all duration-300"></IoIosNotificationsOutline>
+
             <IoIosSettings className="text-white cursor-pointer font-bold w-[40px] h-[40px] rounded-full p-2 bg-[#3A3D45]"></IoIosSettings>
             <ConnectButton client={client} />
           </div>

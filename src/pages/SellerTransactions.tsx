@@ -46,7 +46,7 @@ const SellerTransactions = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { mutate: sendTransaction } = useSendTransaction();
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
 
   if (!account) {
     toast({
@@ -74,7 +74,7 @@ const SellerTransactions = () => {
     weiValue,
   }: AcknowledgeInterestParams) => {
     try {
-      dispatch(setToLoad())
+      dispatch(setToLoad());
       const transaction = await prepareContractCall({
         contract,
         method:
@@ -98,8 +98,7 @@ const SellerTransactions = () => {
 
           navigate("/seller-transactions");
 
-          dispatch(unLoad())
-
+          dispatch(unLoad());
         },
         onError: (error) => {
           console.error("Transaction failed:", error);
@@ -111,8 +110,7 @@ const SellerTransactions = () => {
             variant: "destructive",
           });
 
-          dispatch(unLoad())
-
+          dispatch(unLoad());
         },
       });
     } catch (error) {
@@ -123,8 +121,7 @@ const SellerTransactions = () => {
         variant: "destructive",
       });
 
-      dispatch(unLoad())
-
+      dispatch(unLoad());
     }
   };
 
@@ -133,6 +130,8 @@ const SellerTransactions = () => {
     purchaseId,
   }: AbortInterestBeforeAcknowledgeParams) => {
     try {
+      dispatch(setToLoad());
+
       const transaction = await prepareContractCall({
         contract,
         method:
@@ -154,6 +153,8 @@ const SellerTransactions = () => {
           });
 
           navigate("/seller-transactions");
+
+          dispatch(unLoad());
         },
         onError: (error) => {
           console.error("Transaction failed:", error);
@@ -164,6 +165,8 @@ const SellerTransactions = () => {
             description: "Error with transaction for creating product",
             variant: "destructive",
           });
+
+          dispatch(unLoad());
         },
       });
     } catch (error) {
@@ -173,6 +176,8 @@ const SellerTransactions = () => {
         description: "Error with transaction for creating product",
         variant: "destructive",
       });
+
+      dispatch(unLoad());
     }
   };
 
@@ -181,6 +186,8 @@ const SellerTransactions = () => {
     purchaseId,
   }: ReclaimDepositParams) => {
     try {
+      dispatch(setToLoad());
+
       const transaction = await prepareContractCall({
         contract,
         method:
@@ -202,6 +209,8 @@ const SellerTransactions = () => {
           });
 
           navigate("/seller-transactions");
+
+          dispatch(unLoad());
         },
         onError: (error) => {
           console.error("Transaction failed:", error);
@@ -212,6 +221,8 @@ const SellerTransactions = () => {
             description: "Error with transaction for creating product",
             variant: "destructive",
           });
+
+          dispatch(unLoad());
         },
       });
     } catch (error) {
@@ -221,6 +232,8 @@ const SellerTransactions = () => {
         description: "Error with transaction for creating product",
         variant: "destructive",
       });
+
+      dispatch(unLoad());
     }
   };
 
@@ -229,6 +242,8 @@ const SellerTransactions = () => {
     purchaseId,
   }: ReclaimDepositAfterAcknowledgeParams) => {
     try {
+      dispatch(setToLoad());
+
       const transaction = await prepareContractCall({
         contract,
         method:
@@ -250,6 +265,8 @@ const SellerTransactions = () => {
           });
 
           navigate("/seller-transactions");
+
+          dispatch(unLoad());
         },
         onError: (error) => {
           console.error("Transaction failed:", error);
@@ -260,6 +277,8 @@ const SellerTransactions = () => {
             description: "Error with transaction for creating product",
             variant: "destructive",
           });
+
+          dispatch(unLoad());
         },
       });
     } catch (error) {
@@ -269,6 +288,8 @@ const SellerTransactions = () => {
         description: "Error with transaction for creating product",
         variant: "destructive",
       });
+
+      dispatch(unLoad());
     }
   };
 
@@ -288,6 +309,11 @@ const SellerTransactions = () => {
 
       {!isPending && (
         <div className="w-10/12 flex flex-col">
+          {data && data.length == 0 && (
+            <div className="flex flex-row justify-center items-center pt-10">
+              <p className="text-slate-400">There is no transactions for sellers</p>
+            </div>
+          )}
           {data && data.length > 0 && (
             <Table>
               <TableCaption>A list of your recent transactions.</TableCaption>

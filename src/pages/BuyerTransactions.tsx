@@ -21,6 +21,8 @@ import {
 import { stateMappingBuyer } from "../constants";
 import { Button } from "@/components/ui/button";
 import { prepareContractCall, sendTransaction } from "thirdweb";
+import { useDispatch } from "react-redux";
+import { setToLoad, unLoad } from "@/features/load/loadSlice";
 
 interface ConfirmIntestestParams {
   purchaseId: number;
@@ -40,7 +42,9 @@ const BuyerTransactions = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { mutate: sendTransaction } = useSendTransaction();
+  const dispatch=useDispatch()
 
+  
   if (!account) {
     toast({
       title: "Error",
@@ -67,6 +71,8 @@ const BuyerTransactions = () => {
     weiValue,
   }: ConfirmIntestestParams) => {
     try {
+      dispatch(setToLoad())
+
       const transaction = await prepareContractCall({
         contract,
         method: "function buyerConfirmPurchase(uint256 _purchase_id) payable",
@@ -87,6 +93,9 @@ const BuyerTransactions = () => {
           });
 
           navigate("/buyer-transactions");
+
+          dispatch(unLoad())
+
         },
         onError: (error) => {
           console.error("Transaction failed:", error);
@@ -97,6 +106,9 @@ const BuyerTransactions = () => {
             description: "Error with transaction for creating product",
             variant: "destructive",
           });
+
+          dispatch(unLoad())
+
         },
       });
     } catch (error) {
@@ -106,6 +118,8 @@ const BuyerTransactions = () => {
         description: "Error with transaction for creating product",
         variant: "destructive",
       });
+
+      dispatch(unLoad())
     }
   };
 
@@ -114,6 +128,8 @@ const BuyerTransactions = () => {
     purchaseId,
   }: BuyerDiscardInterestToBuyProductParams) => {
     try {
+      dispatch(setToLoad())
+
       const transaction = await prepareContractCall({
         contract,
         method: "function buyerDiscardInterestForProduct(uint256 _purchase_id)",
@@ -134,6 +150,9 @@ const BuyerTransactions = () => {
           });
 
           navigate("/buyer-transactions");
+
+          dispatch(unLoad())
+
         },
         onError: (error) => {
           console.error("Transaction failed:", error);
@@ -144,6 +163,9 @@ const BuyerTransactions = () => {
             description: "Error with transaction for creating product",
             variant: "destructive",
           });
+
+          dispatch(unLoad())
+
         },
       });
     } catch (error) {
@@ -153,6 +175,9 @@ const BuyerTransactions = () => {
         description: "Error with transaction for creating product",
         variant: "destructive",
       });
+
+      dispatch(unLoad())
+
     }
   };
 
@@ -161,6 +186,8 @@ const BuyerTransactions = () => {
     purchaseId,
   }: ConfirmReceiptProductParams) => {
     try {
+      dispatch(setToLoad())
+
       const transaction = await prepareContractCall({
         contract,
         method: "function buyerConfirmReceivingProduct(uint256 _purchase_id)",
@@ -180,6 +207,9 @@ const BuyerTransactions = () => {
           });
 
           navigate("/buyer-transactions");
+
+          dispatch(unLoad())
+
         },
         onError: (error) => {
           console.error("Transaction failed:", error);
@@ -190,6 +220,9 @@ const BuyerTransactions = () => {
             description: "Error with transaction for creating product",
             variant: "destructive",
           });
+
+          dispatch(unLoad())
+
         },
       });
     } catch (error) {
@@ -199,6 +232,9 @@ const BuyerTransactions = () => {
         description: "Error with transaction for creating product",
         variant: "destructive",
       });
+
+      dispatch(unLoad())
+
     }
   };
 
@@ -218,6 +254,12 @@ const BuyerTransactions = () => {
 
       {!isPending && (
         <div className="w-10/12 flex flex-col">
+           {data && data.length == 0 && (
+            <div className="flex flex-row justify-center items-center pt-10">
+              <p className="text-slate-400">There is no transactions for sellers</p>
+            </div>
+          )}
+
           {data && data.length > 0 && (
             <Table>
               <TableCaption>A list of your recent transactions.</TableCaption>

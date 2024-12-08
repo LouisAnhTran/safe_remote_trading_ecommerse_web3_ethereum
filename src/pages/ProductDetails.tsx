@@ -23,6 +23,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { prepareContractCall } from "thirdweb";
+import { useDispatch } from "react-redux";
+import { setToLoad, unLoad } from "@/features/load/loadSlice";
 
 // Transform string to number for quantity
 const formSchema = z.object({
@@ -42,6 +44,7 @@ const ProductDetails = () => {
   const { mutate: sendTransaction } = useSendTransaction();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   //   make sure user connect to wallet
   const account = useActiveAccount();
@@ -72,6 +75,8 @@ const ProductDetails = () => {
     }
 
     try {
+      dispatch(setToLoad());
+
       const transaction = await prepareContractCall({
         contract,
         method:
@@ -93,6 +98,9 @@ const ProductDetails = () => {
           });
 
           navigate("/buyer-transactions");
+
+          dispatch(unLoad());
+
         },
         onError: (error) => {
           console.log("Transaction failed:", error);
@@ -103,6 +111,9 @@ const ProductDetails = () => {
             description: error.message,
             variant: "destructive",
           });
+
+          dispatch(unLoad());
+
         },
       });
     } catch (error) {
@@ -113,6 +124,8 @@ const ProductDetails = () => {
           "Error with transaction for showing interest to buy product",
         variant: "destructive",
       });
+      dispatch(unLoad());
+
     }
   }
 
