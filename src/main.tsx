@@ -11,16 +11,24 @@ import "./index.css";
 import { createThirdwebClient, getContract } from "thirdweb";
 import { defineChain } from "thirdweb/chains";
 
+
+console.log("test .env file",import.meta.env.VITE_TEMPLATE_CLIENT_ID); // Logs: MyViteApp
+console.log("test .env file",import.meta.env.VITE_CONTRACT_ADDRESSS); // Logs: MyViteApp
+
+const clientID=import.meta.env.VITE_TEMPLATE_CLIENT_ID;
+const contractAddress=import.meta.env.VITE_CONTRACT_ADDRESSS;
+
+
 // create the client with your clientId, or secretKey if in a server environment
 const client = createThirdwebClient({
-  clientId: "07a04bf170c7417ab25d95b0cefc79c8",
+  clientId: clientID,
 });
 
 // connect to your contract
 export const contract = getContract({
   client,
   chain: defineChain(11155111),
-  address: "0x8d3572F069260e5057c26845a16Fd66d3c663c2E",
+  address: contractAddress,
 });
 
 createRoot(document.getElementById("root")!).render(
