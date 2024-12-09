@@ -49,9 +49,24 @@ import { useToast } from "./hooks/use-toast";
 import { useEffect, useRef } from "react";
 
 // handle event
-const preparedEvent = prepareEvent({
+const preparedEvenPurchaseCreated = prepareEvent({
   signature:
     "event PurchaseCreated(uint256 indexed purchaseId, address indexed buyer, address indexed seller, uint256 productId, uint256 quantity, uint8 status)",
+});
+
+const preparedEventSellerAcknowledgePurchase = prepareEvent({
+  signature:
+    "event SellerAcknowledgePurchase(uint256 purchaseID, address buyerAddress)",
+});
+
+const preparedEventBuyerConfirmPurchase = prepareEvent({
+  signature:
+    "event BuyerConfirmPurchase(uint256 purchaseID, address sellerAddress)",
+});
+
+const preparedEventBuyerConfirmReceivingProduct = prepareEvent({
+  signature:
+    "event BuyerConfirmReceivingProduct(uint256 purchaseID, address sellerAddress)",
 });
 
 export function App() {
@@ -61,32 +76,47 @@ export function App() {
   const account = useActiveAccount();
   const { toast } = useToast();
 
-   // Ref to track processed events
-   const processedEvents = useRef(new Set());
+  // Handle all events
+  const { data: events } = useContractEvents({
+    contract,
+    events: [preparedEvenPurchaseCreated,preparedEventSellerAcknowledgePurchase,preparedEventBuyerConfirmPurchase,preparedEventBuyerConfirmReceivingProduct],
+  });
 
-   // Handle all events
-   const { data: events } = useContractEvents({
-     contract,
-     events: [preparedEvent],
-   });
- 
-   useEffect(()=>{
+  useEffect(() => {
     if (events && account) {
-      const seller_address = events?.[events.length-1]?.args?.seller;
- 
-      console.log("event: ",events)
- 
-      // Ensure we process each event only once
-      if (seller_address === account?.address) {
+      console.log("event: ", events);
+
+      const last_event=events[events.length-1];
+
+      if (last_event.eventName == "PurchaseCreated" && last_event.args.seller==account.address) {
         toast({
-          title: "Purchase created",
-          description: "Someone showed interest to buy your product",
+          title: "Succesesful transaction",
+          description: "Someone showed interest to buy your product id "+last_event.args.productId,
+          variant: "success",
+        });
+      } else if (last_event.eventName=="SellerAcknowledgePurchase" && last_event.args.buyerAddress==account.address) {
+        toast({
+          title: "Succesesful transaction",
+          description: "Seller has acknowledged the your interest to buy product with purchase id "+last_event.args.purchaseID+" and made the deposit",
+          variant: "success",
+        });
+      } else if (last_event.eventName=="BuyerConfirmPurchase" && last_event.args.sellerAddress==account.address) {
+        toast({
+          title: "Succesesful transaction",
+          description: "Buyer has confirmed purchase and made the deposits for purchase id "+last_event.args.purchaseID,
+          variant: "success",
+        });
+      } else if (last_event.eventName=="BuyerConfirmReceivingProduct" && last_event.args.sellerAddress==account.address) {
+        toast({
+          title: "Succesesful transaction",
+          description: "Buyer has received the product and redeem deposit, you can proceed to withdraw your deposit for purchase id "+last_event.args.purchaseID,
           variant: "success",
         });
       }
+      
     }
-   },[events,account])
-  
+  }, [events, account]);
+
   console.log("isLoadingGlobal: ", isLoadingGlobal);
 
   return (
