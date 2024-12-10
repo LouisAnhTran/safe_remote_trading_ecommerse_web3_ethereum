@@ -23,6 +23,12 @@ import { Button } from "@/components/ui/button";
 import { prepareContractCall, sendTransaction } from "thirdweb";
 import { useDispatch } from "react-redux";
 import { setToLoad, unLoad } from "@/features/load/loadSlice";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import ProductHover from "@/components/ProductHover";
 
 interface ConfirmIntestestParams {
   purchaseId: number;
@@ -268,6 +274,7 @@ const BuyerTransactions = () => {
                   <TableHead>Purchase ID</TableHead>
                   <TableHead>Seller</TableHead>
                   <TableHead>Product ID</TableHead>
+                  <TableHead>Product Details</TableHead>
                   <TableHead>Quantity</TableHead>
                   <TableHead>Deposit Buyer (Ether)</TableHead>
                   <TableHead>Deposit Seller (Ether)</TableHead>
@@ -281,6 +288,20 @@ const BuyerTransactions = () => {
                     <TableCell>{item.purchaseId.toString()}</TableCell>
                     <TableCell>{item.seller}</TableCell>
                     <TableCell>{item.productId.toString()}</TableCell>
+                    <TableCell>
+                      <HoverCard>
+
+                        <HoverCardTrigger>
+                          <p className="underline text-blue-600">details</p> 
+                        </HoverCardTrigger>
+
+                        <HoverCardContent className="bg-white opacity-90 p-4 w-[300px] h-[220px] rounded-2xl border-2 border-black">
+                          <ProductHover productId={item.productId.toString()}></ProductHover>
+                        </HoverCardContent>
+
+                      </HoverCard>
+                     
+                    </TableCell>
                     <TableCell>{item.quantity.toString()}</TableCell>
                     <TableCell>
                       {Number(item.requiredDepositBuyerInWei.toString()) / 1e18}

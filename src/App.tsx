@@ -83,7 +83,7 @@ export function App() {
   });
 
   useEffect(() => {
-    if (events && account) {
+    if (events && account && events.length>0) {
       console.log("event: ", events);
 
       const last_event=events[events.length-1];

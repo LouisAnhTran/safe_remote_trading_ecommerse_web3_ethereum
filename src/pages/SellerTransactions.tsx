@@ -23,6 +23,12 @@ import { Button } from "@/components/ui/button";
 import { prepareContractCall } from "thirdweb";
 import { useDispatch } from "react-redux";
 import { setToLoad, unLoad } from "@/features/load/loadSlice";
+import ProductHover from "@/components/ProductHover";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 interface AcknowledgeInterestParams {
   purchaseId: number;
@@ -311,7 +317,9 @@ const SellerTransactions = () => {
         <div className="w-10/12 flex flex-col">
           {data && data.length == 0 && (
             <div className="flex flex-row justify-center items-center pt-10">
-              <p className="text-slate-400">There is no transactions for sellers</p>
+              <p className="text-slate-400">
+                There is no transactions for sellers
+              </p>
             </div>
           )}
           {data && data.length > 0 && (
@@ -322,6 +330,7 @@ const SellerTransactions = () => {
                   <TableHead>Purchase ID</TableHead>
                   <TableHead>Seller</TableHead>
                   <TableHead>Product ID</TableHead>
+                  <TableHead>Product Details</TableHead>
                   <TableHead>Quantity</TableHead>
                   <TableHead>Deposit Buyer (Ether)</TableHead>
                   <TableHead>Deposit Seller (Ether)</TableHead>
@@ -335,6 +344,20 @@ const SellerTransactions = () => {
                     <TableCell>{item.purchaseId.toString()}</TableCell>
                     <TableCell>{item.seller}</TableCell>
                     <TableCell>{item.productId.toString()}</TableCell>
+                    <TableCell>
+                      <HoverCard>
+
+                        <HoverCardTrigger>
+                          <p className="underline text-blue-600">details</p> 
+                        </HoverCardTrigger>
+
+                        <HoverCardContent className="bg-white opacity-90 p-4 w-[300px] h-[220px] rounded-2xl border-2 border-black">
+                          <ProductHover productId={item.productId.toString()}></ProductHover>
+                        </HoverCardContent>
+
+                      </HoverCard>
+                     
+                    </TableCell>
                     <TableCell>{item.quantity.toString()}</TableCell>
                     <TableCell>
                       {Number(item.requiredDepositBuyerInWei.toString()) / 1e18}
